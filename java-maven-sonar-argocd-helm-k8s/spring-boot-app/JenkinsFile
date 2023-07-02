@@ -35,9 +35,9 @@ pipeline {
         DOCKER_IMAGE = "shan123456/project11:${BUILD_NUMBER}"
       }
       steps {
-        withCredentials([string(credentialsId: 'dockerhub', variable: '')]) {
+          withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhubpass')]) {
     // some block
-
+   
           script {
             sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
             def dockerImage = docker.image("${DOCKER_IMAGE}")
