@@ -26,7 +26,7 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'sonarqube_token', variable: 'sonarqube')]) {
           // some block
-          sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+          sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$sonarqube -Dsonar.host.url=${SONAR_URL}'
         }
       }
     }
@@ -38,12 +38,9 @@ pipeline {
         withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhubpass')]) {
           // some block
           script {
-            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
+            sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
             def dockerImage = docker.image("${DOCKER_IMAGE}")
-
-            {
-              dockerImage.push()
-            }
+            dockerImage.push()
           }
         }
       }
