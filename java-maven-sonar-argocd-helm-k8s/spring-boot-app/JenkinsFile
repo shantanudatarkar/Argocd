@@ -2,7 +2,7 @@ pipeline {
   agent {
     docker {
       image 'abhishekf5/maven-abhishek-docker-agent:v1'
-      args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+      args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
   stages {
@@ -15,7 +15,6 @@ pipeline {
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
-        // build the project and create a JAR file
         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
       }
     }
@@ -25,26 +24,25 @@ pipeline {
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube_token', variable: 'sonarqube')]) {
-          // some block
           sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$sonarqube -Dsonar.host.url=${SONAR_URL}'
         }
       }
     }
     stage('Build and Push Docker Image') {
       environment {
-   }
-  steps {
-    withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerhubpwd')]) {
-
-      script {
-        sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
-        def dockerImage = docker.image("${DOCKER_IMAGE}")
-        sh "docker push shan123456/argocd:${BUILD_NUMBER}" 
+        DOCKER_IMAGE = "shan123456/argocd:${BUILD_NUMBER}"
+      }
+      steps {
+        withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerhubpwd')]) {
+          script {
+            sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
+            sh "docker tag ${DOCKER_IMAGE} shan123456/argocd:${BUILD_NUMBER}"
+            sh "docker push shan123456/argocd:${BUILD_NUMBER}"
+          }
+        }
       }
     }
-  }
-}
-  stage('Update Deployment File') {
+    stage('Update Deployment File') {
       environment {
         GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
         GIT_USER_NAME = "iam-veeramalla"
