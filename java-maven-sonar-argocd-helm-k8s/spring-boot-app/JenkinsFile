@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    docker {     
+    docker {
       image 'abhishekf5/maven-abhishek-docker-agent:v1'
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
@@ -9,13 +9,13 @@ pipeline {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        //git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
+        // git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
       }
     }
     stage('Build and Test') {
       steps {
-        sh 'sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/ARGOCD'
-        sh 'sudo chmod -R 755 /var/lib/jenkins/workspace/ARGOCD'
+        sh 'chown -R jenkins:jenkins /var/lib/jenkins/workspace/ARGOCD'
+        sh 'chmod -R 755 /var/lib/jenkins/workspace/ARGOCD'
         sh 'ls -ltr'
         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
       }
@@ -51,8 +51,7 @@ pipeline {
         GIT_USER_NAME = "shantanudatarkar"
       }
       steps {
-         withCredentials([gitUsernamePassword(credentialsId: '51e8fac5-efcf-4ee8-a02f-6889907c693f', gitToolName: 'Default')]) {
-    // some block
+        withCredentials([gitUsernamePassword(credentialsId: '51e8fac5-efcf-4ee8-a02f-6889907c693f', gitToolName: 'Default')]) {
           sh '''
             git config user.email "shan6101995@gmail.com"
             git config user.name "shantanudatarkar"
