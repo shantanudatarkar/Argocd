@@ -33,7 +33,7 @@ pipeline {
                 DOCKER_IMAGE = "shan123456/shantanu:${BUILD_NUMBER}"
             }
             steps {
-                       withCredentials([usernameColonPassword(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                      withCredentials([usernameColonPassword(credentialsId: 'dockerhub_id', variable: 'dockerhub')]) {
                     script {
                         sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
                         sh "docker tag ${DOCKER_IMAGE} shan123456/shantanu:${BUILD_NUMBER}"
