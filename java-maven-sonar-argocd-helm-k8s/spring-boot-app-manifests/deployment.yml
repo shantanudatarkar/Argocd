@@ -17,5 +17,8 @@ spec:
         image: shan123456/shantanu:replaceImageTag
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            cpu: 100m  # Specify an appropriate CPU request value here
       imagePullSecrets:
       - name: my-dockerhub-secret
